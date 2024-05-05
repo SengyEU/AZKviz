@@ -1,5 +1,8 @@
+import azkviz.AzKviz;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("asdad");
+        AzKviz azKviz = new AzKviz();
+        azKviz.start();
     }
 }
