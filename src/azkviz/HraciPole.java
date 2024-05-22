@@ -2,70 +2,76 @@ package azkviz;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class HraciPole extends JFrame {
 
-    public HraciPole(){
+    private JPanel mainPanel;
+
+    private int index = 1;
+
+    public HraciPole() {
         setTitle("Az Kvíz");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 450);
-        getContentPane().setBackground(Color.decode("#9cd2f1"));
+        setSize(1600, 900);
         setExtendedState(MAXIMIZED_BOTH);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(0, 1));
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBackground(Color.decode("#9cd2f1"));
 
-        /*
+        mainPanel.add(createRowPanel(1));
+        mainPanel.add(createRowPanel(2));
+        mainPanel.add(createRowPanel(3));
+        mainPanel.add(createRowPanel(4));
+        mainPanel.add(createRowPanel(5));
+        mainPanel.add(createRowPanel(6));
+        mainPanel.add(createRowPanel(7));
 
-        int buttonCount = 1;
-        int slot = 0;
-
-        List<Integer> slots = Arrays.asList(4, 11, 12, 17, 18, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34, 35, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49);
-
-        for (int i = 1; i <= 7; i++) {
-            for (int j = 1; j <= 7; j++) {
-                slot++;
-                JButton button = new JButton("" + buttonCount);
-                if(slots.contains(slot)){
-                    buttonCount++;
-                    panel.add(button);
-                }
-                else {
-                    panel.add(new JLabel());
-                }
-            }
-        }
-
-        */
-
-        panel.add(createRowPanel(1));
-        panel.add(createRowPanel(2));
-        panel.add(createRowPanel(3));
-        panel.add(createRowPanel(4));
-        panel.add(createRowPanel(5));
-        panel.add(createRowPanel(6));
-
-        add(panel);
-        pack();
+        add(mainPanel);
         setLocationRelativeTo(null);
         setVisible(true);
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                adjustButtonSize();
+            }
+        });
+
+        adjustButtonSize();
     }
 
     private JPanel createRowPanel(int numComponents) {
-        JPanel rowPanel = new JPanel(new GridLayout(1, 0)); // 1 row, 0 columns
+        JPanel rowPanel = new JPanel();
+        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
+        rowPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Add components to the row panel
         for (int i = 0; i < numComponents; i++) {
-            JButton button = new JButton("Button " + (i + 1));
+            JButton button = new JButton("Button " + index);
             rowPanel.add(button);
+            index++;
         }
 
-        rowPanel.setPreferredSize(new Dimension(100, rowPanel.getPreferredSize().height));
-
         return rowPanel;
+    }
+
+    private void adjustButtonSize() {
+        int buttonHeight = getHeight() / 7;
+        int buttonwidth = getWidth() / 8;
+        for (Component row : mainPanel.getComponents()) {
+            if (!(row instanceof JPanel rowPanel)) return;
+            for (Component comp : rowPanel.getComponents()) {
+                if (!(comp instanceof JButton button)) return;
+
+                button.setPreferredSize(new Dimension(buttonwidth, buttonHeight));
+                button.setMaximumSize(new Dimension(buttonwidth, buttonHeight));
+                rowPanel.revalidate();
+                rowPanel.repaint();
+
+            }
+        }
     }
 
 
