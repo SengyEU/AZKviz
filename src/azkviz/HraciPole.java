@@ -1,65 +1,35 @@
 package azkviz;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.EmptyStackException;
 
 public class HraciPole extends JFrame {
 
-    private final JPanel mainPanel;
-    private final JPanel pyramidPanel;
+    private JPanel mainPanel;
 
     private int index = 1;
 
     public HraciPole() {
         setTitle("Az Kvíz");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1920, 1080);
+        setSize(1600, 900);
         setExtendedState(MAXIMIZED_BOTH);
 
         mainPanel = new JPanel();
-
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.decode("#9cd2f1"));
 
-        JPanel playersPanel = new JPanel();
+        mainPanel.add(createRowPanel(1));
+        mainPanel.add(createRowPanel(2));
+        mainPanel.add(createRowPanel(3));
+        mainPanel.add(createRowPanel(4));
+        mainPanel.add(createRowPanel(5));
+        mainPanel.add(createRowPanel(6));
+        mainPanel.add(createRowPanel(7));
 
-        playersPanel.setBorder(new EmptyBorder(50, 50, 50, 50));
-        playersPanel.setBackground(Color.decode("#9cd2f1"));
-
-        playersPanel.setLayout(new BoxLayout(playersPanel, BoxLayout.X_AXIS));
-        JButton player1 = new JButton("Hráč 1");
-        player1.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JButton player2 = new JButton("Hráč 2");
-        player2.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-        playersPanel.add(player1);
-        playersPanel.add(Box.createHorizontalGlue());
-        playersPanel.add(player2);
-
-        mainPanel.add(playersPanel);
-
-        pyramidPanel = new JPanel();
-
-        pyramidPanel.setLayout(new BoxLayout(pyramidPanel, BoxLayout.Y_AXIS));
-        pyramidPanel.setBackground(Color.decode("#9cd2f1"));
-
-        pyramidPanel.add(createRowPanel(1));
-        pyramidPanel.add(createRowPanel(2));
-        pyramidPanel.add(createRowPanel(3));
-        pyramidPanel.add(createRowPanel(4));
-        pyramidPanel.add(createRowPanel(5));
-        pyramidPanel.add(createRowPanel(6));
-        pyramidPanel.add(createRowPanel(7));
-
-        pyramidPanel.setBorder(new EmptyBorder(0, 200, 200, 200));
-
-        mainPanel.add(pyramidPanel);
-
-        this.add(mainPanel);
+        add(mainPanel);
         setLocationRelativeTo(null);
         setVisible(true);
 
@@ -79,8 +49,7 @@ public class HraciPole extends JFrame {
         rowPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         for (int i = 0; i < numComponents; i++) {
-            JButton button = new JButton(String.valueOf(index));
-            button.setFont(button.getFont().deriveFont(Font.BOLD));
+            JButton button = new JButton("Button " + index);
             rowPanel.add(button);
             index++;
         }
@@ -89,18 +58,15 @@ public class HraciPole extends JFrame {
     }
 
     private void adjustButtonSize() {
-        int buttonHeight = (mainPanel.getHeight() - 200 ) / 7;
-        int buttonWidth = (mainPanel.getWidth() - 400 ) / 8;
-        float buttonTextSize = Math.max(pyramidPanel.getWidth(), pyramidPanel.getHeight()) / 21.6f;
-        for (Component row : pyramidPanel.getComponents()) {
-            if (!(row instanceof JPanel rowPanel)) continue;
+        int buttonHeight = getHeight() / 7;
+        int buttonwidth = getWidth() / 8;
+        for (Component row : mainPanel.getComponents()) {
+            if (!(row instanceof JPanel rowPanel)) return;
             for (Component comp : rowPanel.getComponents()) {
-                if (!(comp instanceof JButton button)) continue;
-                if(button.getText().contains("Hráč")) continue;
+                if (!(comp instanceof JButton button)) return;
 
-                button.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-                button.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-                button.setFont(button.getFont().deriveFont(buttonTextSize));
+                button.setPreferredSize(new Dimension(buttonwidth, buttonHeight));
+                button.setMaximumSize(new Dimension(buttonwidth, buttonHeight));
                 rowPanel.revalidate();
                 rowPanel.repaint();
 
