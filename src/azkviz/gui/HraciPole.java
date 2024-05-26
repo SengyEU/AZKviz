@@ -1,16 +1,14 @@
-package azkviz;
+package azkviz.gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.EmptyStackException;
 
 public class HraciPole extends JFrame {
 
     private final JPanel mainPanel;
-    private final JPanel pyramidPanel;
 
     private int index = 1;
 
@@ -33,8 +31,11 @@ public class HraciPole extends JFrame {
         playersPanel.setLayout(new BoxLayout(playersPanel, BoxLayout.X_AXIS));
         JButton player1 = new JButton("Hráč 1");
         player1.setAlignmentX(Component.LEFT_ALIGNMENT);
+        player1.setBackground(Color.decode("#70e3e5"));
+
         JButton player2 = new JButton("Hráč 2");
         player2.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        player2.setBackground(Color.decode("#f3a004"));
 
         playersPanel.add(player1);
         playersPanel.add(Box.createHorizontalGlue());
@@ -42,7 +43,7 @@ public class HraciPole extends JFrame {
 
         mainPanel.add(playersPanel);
 
-        pyramidPanel = new JPanel();
+        JPanel pyramidPanel = new JPanel();
 
         pyramidPanel.setLayout(new BoxLayout(pyramidPanel, BoxLayout.Y_AXIS));
         pyramidPanel.setBackground(Color.decode("#9cd2f1"));
@@ -79,7 +80,8 @@ public class HraciPole extends JFrame {
         rowPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         for (int i = 0; i < numComponents; i++) {
-            JButton button = new JButton(String.valueOf(index));
+            HexagonButton button = new HexagonButton(String.valueOf(index));
+            button.setBackground(Color.decode("#9cd2f1"));
             button.setFont(button.getFont().deriveFont(Font.BOLD));
             rowPanel.add(button);
             index++;
@@ -89,24 +91,34 @@ public class HraciPole extends JFrame {
     }
 
     private void adjustButtonSize() {
-        int buttonHeight = (mainPanel.getHeight() - 200 ) / 7;
-        int buttonWidth = (mainPanel.getWidth() - 400 ) / 8;
-        float buttonTextSize = Math.max(pyramidPanel.getWidth(), pyramidPanel.getHeight()) / 21.6f;
-        for (Component row : pyramidPanel.getComponents()) {
+        int buttonSize = (mainPanel.getHeight() - 200) / 9;
+        int buttonWidth = (mainPanel.getWidth() - 400) / 10;
+        float mainPanelSize = Math.max(mainPanel.getWidth(), mainPanel.getHeight());
+
+        for (Component row : mainPanel.getComponents()) {
             if (!(row instanceof JPanel rowPanel)) continue;
+
             for (Component comp : rowPanel.getComponents()) {
-                if (!(comp instanceof JButton button)) continue;
-                if(button.getText().contains("Hráč")) continue;
-
-                button.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
-                button.setMaximumSize(new Dimension(buttonWidth, buttonHeight));
-                button.setFont(button.getFont().deriveFont(buttonTextSize));
-                rowPanel.revalidate();
-                rowPanel.repaint();
-
+                if (comp instanceof JPanel childPanel) {
+                    for (Component childComp : childPanel.getComponents()) {
+                        if (childComp instanceof HexagonButton button) {
+                            setButtonSizeAndFont(button, buttonSize, buttonSize, mainPanelSize / 40f);
+                        }
+                    }
+                } else if (comp instanceof JButton button) {
+                    setButtonSizeAndFont(button, buttonWidth, buttonSize, mainPanelSize / 60f);
+                }
             }
+
+            rowPanel.revalidate();
+            rowPanel.repaint();
         }
     }
 
+    private void setButtonSizeAndFont(JButton button, int width, int height, float fontSize) {
+        button.setPreferredSize(new Dimension(width, height));
+        button.setMaximumSize(new Dimension(width, height));
+        button.setFont(button.getFont().deriveFont(fontSize));
+    }
 
 }
