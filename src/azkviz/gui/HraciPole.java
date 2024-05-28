@@ -9,14 +9,14 @@ import java.awt.event.ComponentEvent;
 public class HraciPole extends JFrame {
 
     private final JPanel mainPanel;
-
     private int index = 1;
 
     public HraciPole() {
+
         setTitle("Az Kvíz");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1920, 1080);
-        setExtendedState(MAXIMIZED_BOTH);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setMinimumSize(new Dimension(1280, 720));
 
         mainPanel = new JPanel();
 
@@ -93,7 +93,7 @@ public class HraciPole extends JFrame {
     private void adjustButtonSize() {
         int buttonSize = (mainPanel.getHeight() - 200) / 9;
         int buttonWidth = (mainPanel.getWidth() - 400) / 10;
-        float mainPanelSize = Math.max(mainPanel.getWidth(), mainPanel.getHeight());
+        float mainPanelSize = getWidth();
 
         for (Component row : mainPanel.getComponents()) {
             if (!(row instanceof JPanel rowPanel)) continue;
@@ -106,7 +106,7 @@ public class HraciPole extends JFrame {
                         }
                     }
                 } else if (comp instanceof JButton button) {
-                    setButtonSizeAndFont(button, buttonWidth, buttonSize, mainPanelSize / 60f);
+                    setButtonSizeAndFont(button, buttonWidth * 2, buttonSize * 2, mainPanelSize / 60f);
                 }
             }
 
