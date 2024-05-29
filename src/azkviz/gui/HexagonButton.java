@@ -2,6 +2,8 @@ package azkviz.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Path2D;
 
 public class HexagonButton extends JButton {
@@ -11,7 +13,15 @@ public class HexagonButton extends JButton {
     public HexagonButton(String text) {
         super(text);
         applyDefaults();
+
+        this.addActionListener(e -> {
+            if(state == 4) state = 0;
+            state++;
+            repaint();
+        });
     }
+
+    private int state = 1;
 
     @Override
     public void invalidate() {
@@ -65,7 +75,15 @@ public class HexagonButton extends JButton {
         g2d.draw(path);
 
         // Set the color for the border fill
-        g2d.setColor(Color.decode("#f8f4f4"));  // Change this to the desired border fill color
+        Color fillColor;
+        switch(state){
+            case 2 -> fillColor = Color.decode("#70e3e5");
+            case 3 -> fillColor = Color.decode("#f3a004");
+            case 4 -> fillColor = Color.BLACK;
+            default -> fillColor = Color.decode("#f8f4f4");
+        }
+        g2d.setColor(fillColor);
+        // Change this to the desired border fill color
         g2d.fill(path);  // Fill the hexagon path with the specified color
 
         g2d.dispose();
