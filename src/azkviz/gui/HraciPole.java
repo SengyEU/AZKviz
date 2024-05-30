@@ -1,5 +1,7 @@
 package azkviz.gui;
 
+import azkviz.AzKviz;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -9,9 +11,8 @@ import java.awt.event.ComponentEvent;
 public class HraciPole extends JFrame {
 
     private final JPanel mainPanel;
-    private int index = 1;
 
-    public HraciPole() {
+    public HraciPole(AzKviz azKviz) {
 
         setTitle("Az Kvíz");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -48,13 +49,28 @@ public class HraciPole extends JFrame {
         pyramidPanel.setLayout(new BoxLayout(pyramidPanel, BoxLayout.Y_AXIS));
         pyramidPanel.setBackground(Color.decode("#9cd2f1"));
 
-        pyramidPanel.add(createRowPanel(1));
-        pyramidPanel.add(createRowPanel(2));
-        pyramidPanel.add(createRowPanel(3));
-        pyramidPanel.add(createRowPanel(4));
-        pyramidPanel.add(createRowPanel(5));
-        pyramidPanel.add(createRowPanel(6));
-        pyramidPanel.add(createRowPanel(7));
+        int[][] buttonStates = azKviz.getButtonStates();
+
+        int index = 1;
+
+        for(int i = 0; i < buttonStates.length; i++){
+            int[] row = buttonStates[i];
+            JPanel rowPanel = new JPanel();
+            rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
+            rowPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            for(int j = 0; j < row.length; j++){
+                int col = row[j];
+                if(col == 0) continue;
+                HexagonButton button = new HexagonButton(azKviz, String.valueOf(index), i, j);
+                button.setBackground(Color.decode("#9cd2f1"));
+                button.setFont(button.getFont().deriveFont(Font.BOLD));
+                rowPanel.add(button);
+                index++;
+            }
+
+            pyramidPanel.add(rowPanel);
+        }
 
         pyramidPanel.setBorder(new EmptyBorder(0, 200, 200, 200));
 
@@ -72,22 +88,6 @@ public class HraciPole extends JFrame {
         });
 
         adjustButtonSize();
-    }
-
-    private JPanel createRowPanel(int numComponents) {
-        JPanel rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        rowPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        for (int i = 0; i < numComponents; i++) {
-            HexagonButton button = new HexagonButton(String.valueOf(index));
-            button.setBackground(Color.decode("#9cd2f1"));
-            button.setFont(button.getFont().deriveFont(Font.BOLD));
-            rowPanel.add(button);
-            index++;
-        }
-
-        return rowPanel;
     }
 
     private void adjustButtonSize() {
