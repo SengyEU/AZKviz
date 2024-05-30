@@ -1,5 +1,7 @@
 package azkviz.gui;
 
+import azkviz.AzKviz;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,20 +10,54 @@ import java.awt.geom.Path2D;
 
 public class HexagonButton extends JButton {
 
+    private final AzKviz azKviz;
     private HexagonPath hexagonPath;
+    private final int row;
+    private final int col;
 
-    public HexagonButton(String text) {
+    public HexagonButton(AzKviz azKviz, String text, int row, int col) {
         super(text);
         applyDefaults();
 
+        this.azKviz = azKviz;
+        this.row = row;
+        this.col = col;
+
         this.addActionListener(e -> {
-            if(state == 4) state = 0;
-            state++;
-            repaint();
+
+            if(azKviz.getButtonState(row, col) != 1) return;
+
+            if(azKviz.isPlayer1Playing()){
+                setState(2);
+                azKviz.setPlayer1Playing(false);
+            } else {
+                setState(3);
+                azKviz.setPlayer1Playing(true);
+            }
+
+            azKviz.play();
         });
     }
 
-    private int state = 1;
+    private Color getStateColor(){
+        Color fillColor;
+        switch(azKviz.getButtonState(row, col)){
+            case 2 -> fillColor = Color.decode("#70e3e5");
+            case 3 -> fillColor = Color.decode("#f3a004");
+            case 4 -> fillColor = Color.BLACK;
+            default -> fillColor = Color.decode("#f8f4f4");
+        }
+
+        return fillColor;
+    }
+
+    public void setState(int state) {
+
+        azKviz.setButtonState(state, row, col);
+
+
+        repaint();
+    }
 
     @Override
     public void invalidate() {
@@ -71,24 +107,12 @@ public class HexagonButton extends JButton {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-        // Draw the outline of the hexagon
         g2d.draw(path);
-
-        // Set the color for the border fill
-        Color fillColor;
-        switch(state){
-            case 2 -> fillColor = Color.decode("#70e3e5");
-            case 3 -> fillColor = Color.decode("#f3a004");
-            case 4 -> fillColor = Color.BLACK;
-            default -> fillColor = Color.decode("#f8f4f4");
-        }
-        g2d.setColor(fillColor);
-        // Change this to the desired border fill color
-        g2d.fill(path);  // Fill the hexagon path with the specified color
+        g2d.setColor(getStateColor());
+        g2d.fill(path);
 
         g2d.dispose();
 
-        // Paint the text
         String text = getText();
         if (text != null && !text.isEmpty()) {
             Graphics2D textG2d = (Graphics2D) g.create();
@@ -105,9 +129,8 @@ public class HexagonButton extends JButton {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // Paint the component (including the text) before filling the hexagon
+        super.paintComponent(g);
 
-        // Fill the hexagon
         Graphics2D hexagonG2d = (Graphics2D) g.create();
         hexagonG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         hexagonG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
