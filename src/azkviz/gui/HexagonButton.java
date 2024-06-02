@@ -1,11 +1,10 @@
 package azkviz.gui;
 
 import azkviz.AzKviz;
+import azkviz.otazky.Otazka;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Path2D;
 
 public class HexagonButton extends JButton {
@@ -28,15 +27,29 @@ public class HexagonButton extends JButton {
             if(azKviz.getButtonState(row, col) != 1) return;
 
             if(azKviz.isPlayer1Playing()){
-                setState(2);
+                if(otazka()){
+                    setState(2);
+                } else {
+                    setState(4);
+                }
                 azKviz.setPlayer1Playing(false);
             } else {
-                setState(3);
+                if(otazka()){
+                    setState(3);
+                } else {
+                    setState(4);
+                }
                 azKviz.setPlayer1Playing(true);
             }
-
-            azKviz.play();
         });
+    }
+
+    private boolean otazka(){
+        Otazka otazka = azKviz.otazky.vygenerujOtazku(true);
+
+        String odpoved = JOptionPane.showInputDialog(null, otazka.getOtazka());
+
+        return otazka.jeOdpovedSpravce(odpoved);
     }
 
     private Color getStateColor(){
@@ -57,6 +70,7 @@ public class HexagonButton extends JButton {
 
 
         repaint();
+        azKviz.play();
     }
 
     @Override
