@@ -11,6 +11,8 @@ import java.awt.event.ComponentEvent;
 public class HraciPole extends JFrame {
 
     private final JPanel mainPanel;
+    public JButton player1;
+    public JButton player2;
 
     public HraciPole(AzKviz azKviz) {
 
@@ -30,13 +32,13 @@ public class HraciPole extends JFrame {
         playersPanel.setBackground(Color.decode("#9cd2f1"));
 
         playersPanel.setLayout(new BoxLayout(playersPanel, BoxLayout.X_AXIS));
-        JButton player1 = new JButton("Hráč 1");
+        player1 = new JButton("Hráč 1");
         player1.setAlignmentX(Component.LEFT_ALIGNMENT);
         player1.setBackground(Color.decode("#70e3e5"));
 
-        JButton player2 = new JButton("Hráč 2");
+        player2 = new JButton("Hráč 2");
         player2.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        player2.setBackground(Color.decode("#f3a004"));
+        player2.setBackground(Color.GRAY);
 
         playersPanel.add(player1);
         playersPanel.add(Box.createHorizontalGlue());
@@ -62,7 +64,7 @@ public class HraciPole extends JFrame {
             for(int j = 0; j < row.length; j++){
                 int col = row[j];
                 if(col == 0) continue;
-                HexagonButton button = new HexagonButton(azKviz, String.valueOf(index), i, j);
+                HexagonButton button = new HexagonButton(azKviz, this, String.valueOf(index), String.valueOf(index), i, j);
                 button.setBackground(Color.decode("#9cd2f1"));
                 button.setFont(button.getFont().deriveFont(Font.BOLD));
                 rowPanel.add(button);

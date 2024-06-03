@@ -14,7 +14,7 @@ public class HexagonButton extends JButton {
     private final int row;
     private final int col;
 
-    public HexagonButton(AzKviz azKviz, String text, int row, int col) {
+    public HexagonButton(AzKviz azKviz, HraciPole hraciPole, String text, String number, int row, int col) {
         super(text);
         applyDefaults();
 
@@ -24,32 +24,85 @@ public class HexagonButton extends JButton {
 
         this.addActionListener(e -> {
 
-            if(azKviz.getButtonState(row, col) != 1) return;
+            int state = azKviz.getButtonState(row, col);
+
+            if(state != 1 && state != 4) return;
 
             if(azKviz.isPlayer1Playing()){
-                if(otazka()){
-                    setState(2);
+
+                if(state == 4){
+                    if(otazka(true)){
+                        setState(2);
+                        azKviz.setPlayer1Playing(false);
+                    } else {
+                        setState(3);
+                        azKviz.setPlayer1Playing(true);
+                    }
                 } else {
-                    setState(4);
+                    if(otazka(false)){
+                        setState(2);
+                        azKviz.setPlayer1Playing(false);
+                    } else {
+                        setState(4);
+                        azKviz.setPlayer1Playing(false);
+                    }
                 }
-                azKviz.setPlayer1Playing(false);
             } else {
-                if(otazka()){
-                    setState(3);
+
+                if(state == 4){
+                    if(otazka(true)){
+                        setState(3);
+                        azKviz.setPlayer1Playing(true);
+                    } else {
+                        setState(2);
+                        azKviz.setPlayer1Playing(false);
+                    }
                 } else {
-                    setState(4);
+                    if(otazka(false)){
+                        setState(3);
+                        azKviz.setPlayer1Playing(true);
+                    } else {
+                        setState(4);
+                        azKviz.setPlayer1Playing(true);
+                    }
                 }
-                azKviz.setPlayer1Playing(true);
             }
+
+            if(azKviz.isPlayer1Playing()){
+                hraciPole.player1.setBackground(Color.decode("#70e3e5"));
+                hraciPole.player2.setBackground(Color.gray);
+            } else{
+                hraciPole.player1.setBackground(Color.gray);
+                hraciPole.player2.setBackground(Color.decode("#f3a004"));
+            }
+
+            setText(number);
         });
     }
 
-    private boolean otazka(){
-        Otazka otazka = azKviz.otazky.vygenerujOtazku(true);
+    private boolean otazka(boolean anoNe){
 
-        String odpoved = JOptionPane.showInputDialog(null, otazka.getOtazka());
+        Otazka otazka = azKviz.otazky.vygenerujOtazku(!anoNe);
 
-        return otazka.jeOdpovedSpravce(odpoved);
+        if(!anoNe){
+            String[] slova = otazka.getOdpoved().split(" ");
+
+            StringBuilder prvniPismena = new StringBuilder();
+            for(String slovo : slova){
+                prvniPismena.append(slovo.toCharArray()[0]);
+            }
+
+            setText(prvniPismena.toString());
+        }
+
+        if(anoNe){
+            int odpoved = JOptionPane.showConfirmDialog(null, otazka.getOtazka());
+            int spravnaOdpoved = otazka.getOdpoved().equalsIgnoreCase("ano") ? 0 : 1;
+            return odpoved == spravnaOdpoved;
+        } else {
+            String odpoved = JOptionPane.showInputDialog(null, otazka.getOtazka());
+            return otazka.jeOdpovedSpravce(odpoved);
+        }
     }
 
     private Color getStateColor(){
