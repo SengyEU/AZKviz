@@ -9,15 +9,15 @@ import java.awt.geom.Path2D;
 
 public class HexagonButton extends JButton {
 
-    private final AzKviz azKviz;
-    private HexagonPath hexagonPath;
-    private final int row;
-    private final int col;
     private static final int NO_ANSWER = 0;
     private static final int PLAYER_1_CORRECT = 1;
     private static final int PLAYER_2_CORRECT = 2;
     private static final int PLAYER_DECLINED = 3;
     private static final int PLAYER_2_WRONG = 4;
+    private final AzKviz azKviz;
+    private final int row;
+    private final int col;
+    private HexagonPath hexagonPath;
 
     public HexagonButton(AzKviz azKviz, HraciPole hraciPole, String text, String number, int row, int col) {
         super(text);
@@ -132,9 +132,9 @@ public class HexagonButton extends JButton {
         JOptionPane.showMessageDialog(null, "Správná odpověď byla: " + otazka.getOdpoved(), otazka.getOdpoved(), JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private Color getStateColor(){
+    private Color getStateColor() {
         Color fillColor;
-        switch(azKviz.getButtonState(row, col)){
+        switch (azKviz.getButtonState(row, col)) {
             case 2 -> fillColor = Color.decode("#70e3e5");
             case 3 -> fillColor = Color.decode("#f3a004");
             case 4 -> fillColor = Color.BLACK;
@@ -233,10 +233,6 @@ public class HexagonButton extends JButton {
         hexagonG2d.fill(getHexagonPath());
         hexagonG2d.dispose();
     }
-
-
-
-
 
 
     @Override

@@ -3,40 +3,53 @@ package azkviz.otazky;
 import azkviz.Files;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Otazky {
 
     Random random = new Random();
 
-    private List<Otazka> vedomostniOtazky = new ArrayList<>();
-    private List<Otazka> anoNeOtazky = new ArrayList<>();
+    private final List<Otazka> semifinaloveOtazky = new ArrayList<>();
+    private final Map<String, List<Otazka>> finaloveOtazky = new HashMap<>();
+    private final List<Otazka> nahradniOtazky = new ArrayList<>();
 
     public Otazky() throws IOException {
-        nactiVedomostniOtazky();
-        nactiAnoNeOtazky();
+        nactiSemifinaloveOtazky();
+        nactiFinaloveOtazky();
+        nactiNahradniOtazky();
     }
 
-    public void nactiVedomostniOtazky() throws IOException {
-        for(String line : Files.getLinesFromFile("azkviz/otazky/vedomostni.csv")){
+    public void nactiSemifinaloveOtazky() throws IOException {
+        for(String line : Files.getLinesFromFile("azkviz/otazky/semifinale.csv")){
             String[] otazkaOdpoved = line.split(";");
 
-            vedomostniOtazky.add(new Otazka(otazkaOdpoved[0], otazkaOdpoved[1]));
+            semifinaloveOtazky.add(new Otazka(otazkaOdpoved[0], otazkaOdpoved[1]));
         }
     }
 
-    public void nactiAnoNeOtazky() throws IOException {
-        for(String line : Files.getLinesFromFile("azkviz/otazky/ano_ne.csv")){
+    public void nactiFinaloveOtazky() throws IOException {
+        for(String line : Files.getLinesFromFile("azkviz/otazky/finale.csv")){
+            String[] pismenoOtazkaOdpoved = line.split(";");
+
+            String pismeno = pismenoOtazkaOdpoved[0];
+            String otazka = pismenoOtazkaOdpoved[1];
+            String odpoved = pismenoOtazkaOdpoved[2];
+
+            if(!finaloveOtazky.containsKey(pismeno)) finaloveOtazky.put(pismeno, new ArrayList<>());
+            finaloveOtazky.get(pismeno).add(new Otazka(otazka, odpoved));
+        }
+    }
+
+    public void nactiNahradniOtazky() throws IOException {
+        for(String line : Files.getLinesFromFile("azkviz/otazky/nahradni.csv")){
             String[] otazkaOdpoved = line.split(";");
 
-            anoNeOtazky.add(new Otazka(otazkaOdpoved[0], otazkaOdpoved[1]));
+            nahradniOtazky.add(new Otazka(otazkaOdpoved[0], otazkaOdpoved[1]));
         }
     }
 
     public Otazka vygenerujOtazku(boolean vedomostniOtazka){
-        return vygenerujOtazkuZListu(vedomostniOtazka ? vedomostniOtazky : anoNeOtazky);
+        return vygenerujOtazkuZListu(vedomostniOtazka ? semifinaloveOtazky : nahradniOtazky);
     }
 
     private Otazka vygenerujOtazkuZListu(List<Otazka> otazky) {

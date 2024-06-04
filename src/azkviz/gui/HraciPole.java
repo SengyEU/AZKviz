@@ -11,7 +11,7 @@ import java.awt.event.ComponentEvent;
 public class HraciPole extends JFrame {
 
     private final JPanel mainPanel;
-    private final static String[] letters = {"A", "B", "C", "Č", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "Ř", "S", "T", "U", "V", "W", "Y", "Z", "Ž"};
+    private final static String[] letters = {"A", "B", "C", "Č", "D", "E", "F", "G", "H", "Ch", "I", "J", "K", "L", "M", "N", "O", "P", "R", "Ř", "S", "T", "U", "V", "W", "Y", "Z", "Ž"};
 
     public JButton player1;
     public JButton player2;
