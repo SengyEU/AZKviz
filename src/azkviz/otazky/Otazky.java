@@ -36,8 +36,14 @@ public class Otazky {
     }
 
     public Otazka vygenerujOtazku(boolean vedomostniOtazka){
-        if(vedomostniOtazka) return vedomostniOtazky.get(random.nextInt(vedomostniOtazky.size()));
-        return anoNeOtazky.get(random.nextInt(anoNeOtazky.size()));
+        return vygenerujOtazkuZListu(vedomostniOtazka ? vedomostniOtazky : anoNeOtazky);
     }
+
+    private Otazka vygenerujOtazkuZListu(List<Otazka> otazky) {
+        Otazka otazka = otazky.get(random.nextInt(otazky.size()));
+        otazky.remove(otazka);
+        return otazka;
+    }
+
 
 }

@@ -13,6 +13,11 @@ public class HexagonButton extends JButton {
     private HexagonPath hexagonPath;
     private final int row;
     private final int col;
+    private static final int NO_ANSWER = 0;
+    private static final int PLAYER_1_CORRECT = 1;
+    private static final int PLAYER_2_CORRECT = 2;
+    private static final int PLAYER_DECLINED = 3;
+    private static final int PLAYER_2_WRONG = 4;
 
     public HexagonButton(AzKviz azKviz, HraciPole hraciPole, String text, String number, int row, int col) {
         super(text);
@@ -23,86 +28,108 @@ public class HexagonButton extends JButton {
         this.col = col;
 
         this.addActionListener(e -> {
-
             int state = azKviz.getButtonState(row, col);
 
-            if(state != 1 && state != 4) return;
+            if (state != 1 && state != 4) return;
 
-            if(azKviz.isPlayer1Playing()){
-
-                if(state == 4){
-                    if(otazka(true)){
-                        setState(2);
-                        azKviz.setPlayer1Playing(false);
-                    } else {
-                        setState(3);
-                        azKviz.setPlayer1Playing(true);
-                    }
-                } else {
-                    if(otazka(false)){
-                        setState(2);
-                        azKviz.setPlayer1Playing(false);
-                    } else {
-                        setState(4);
-                        azKviz.setPlayer1Playing(false);
-                    }
-                }
-            } else {
-
-                if(state == 4){
-                    if(otazka(true)){
-                        setState(3);
-                        azKviz.setPlayer1Playing(true);
-                    } else {
-                        setState(2);
-                        azKviz.setPlayer1Playing(false);
-                    }
-                } else {
-                    if(otazka(false)){
-                        setState(3);
-                        azKviz.setPlayer1Playing(true);
-                    } else {
-                        setState(4);
-                        azKviz.setPlayer1Playing(true);
-                    }
-                }
-            }
-
-            if(azKviz.isPlayer1Playing()){
-                hraciPole.player1.setBackground(Color.decode("#70e3e5"));
-                hraciPole.player2.setBackground(Color.gray);
-            } else{
-                hraciPole.player1.setBackground(Color.gray);
-                hraciPole.player2.setBackground(Color.decode("#f3a004"));
-            }
-
+            int result = otazka(state == 4);
+            handleResult(result, hraciPole);
             setText(number);
         });
     }
 
-    private boolean otazka(boolean anoNe){
+    private void handleResult(int result, HraciPole hraciPole) {
+        if (result == PLAYER_1_CORRECT) {
+            setState(2);
+            azKviz.setPlayer1Playing(false);
+        } else if (result == PLAYER_2_CORRECT) {
+            setState(3);
+            azKviz.setPlayer1Playing(true);
+        } else if (result == PLAYER_DECLINED) {
+            setState(4);
+            azKviz.setPlayer1Playing(!azKviz.isPlayer1Playing());
+        } else if (result == PLAYER_2_WRONG) {
+            setState(4);
+        } else {
+            setState(azKviz.isPlayer1Playing() ? 3 : 2);
+        }
 
+        updatePlayerColors(hraciPole);
+    }
+
+    private void updatePlayerColors(HraciPole hraciPole) {
+        if (azKviz.isPlayer1Playing()) {
+            hraciPole.player1.setBackground(Color.decode("#70e3e5"));
+            hraciPole.player2.setBackground(Color.gray);
+        } else {
+            hraciPole.player1.setBackground(Color.gray);
+            hraciPole.player2.setBackground(Color.decode("#f3a004"));
+        }
+    }
+
+    private int otazka(boolean anoNe) {
         Otazka otazka = azKviz.otazky.vygenerujOtazku(!anoNe);
 
-        if(!anoNe){
-            String[] slova = otazka.getOdpoved().split(" ");
-
-            StringBuilder prvniPismena = new StringBuilder();
-            for(String slovo : slova){
-                prvniPismena.append(slovo.toCharArray()[0]);
-            }
-
-            setText(prvniPismena.toString());
+        if (!anoNe) {
+            showFirstLetters(otazka);
         }
 
-        if(anoNe){
-            int odpoved = JOptionPane.showConfirmDialog(null, otazka.getOtazka());
-            int spravnaOdpoved = otazka.getOdpoved().equalsIgnoreCase("ano") ? 0 : 1;
-            return odpoved == spravnaOdpoved;
+        if (anoNe) {
+            return handleYesNoQuestion(otazka);
         } else {
-            String odpoved = JOptionPane.showInputDialog(null, otazka.getOtazka());
-            return otazka.jeOdpovedSpravce(odpoved);
+            return handleTextQuestion(otazka);
         }
+    }
+
+    private void showFirstLetters(Otazka otazka) {
+        String[] words = otazka.getOdpoved().split(" ");
+        StringBuilder firstLetters = new StringBuilder();
+        for (String word : words) {
+            firstLetters.append(word.charAt(0));
+        }
+        setText(firstLetters.toString());
+    }
+
+    private int handleYesNoQuestion(Otazka otazka) {
+        int answer = JOptionPane.showConfirmDialog(null, otazka.getOtazka());
+        int correctAnswer = otazka.getOdpoved().equalsIgnoreCase("ano") ? 0 : 1;
+        if (answer == correctAnswer) {
+            showCorrectAnswerDialog(otazka);
+            return azKviz.isPlayer1Playing() ? PLAYER_1_CORRECT : PLAYER_2_CORRECT;
+        } else {
+            return NO_ANSWER;
+        }
+    }
+
+    private int handleTextQuestion(Otazka otazka) {
+        String answer = JOptionPane.showInputDialog(null, otazka.getOtazka());
+        if (otazka.jeOdpovedSpravne(answer)) {
+            showCorrectAnswerDialog(otazka);
+            return azKviz.isPlayer1Playing() ? PLAYER_1_CORRECT : PLAYER_2_CORRECT;
+        } else {
+            return handleWrongTextAnswer(otazka);
+        }
+    }
+
+    private int handleWrongTextAnswer(Otazka otazka) {
+        int secondPlayer = JOptionPane.showConfirmDialog(null, "Chce odpovídat druhý hráč?");
+        if (secondPlayer == 0) {
+            String answer2 = JOptionPane.showInputDialog(null, otazka.getOtazka());
+            if (otazka.jeOdpovedSpravne(answer2)) {
+                showCorrectAnswerDialog(otazka);
+                return azKviz.isPlayer1Playing() ? PLAYER_2_CORRECT : PLAYER_1_CORRECT;
+            } else {
+                showCorrectAnswerDialog(otazka);
+                return PLAYER_2_WRONG;
+            }
+        } else {
+            showCorrectAnswerDialog(otazka);
+            return PLAYER_DECLINED;
+        }
+    }
+
+    private void showCorrectAnswerDialog(Otazka otazka) {
+        JOptionPane.showMessageDialog(null, "Správná odpověď byla: " + otazka.getOdpoved(), otazka.getOdpoved(), JOptionPane.INFORMATION_MESSAGE);
     }
 
     private Color getStateColor(){

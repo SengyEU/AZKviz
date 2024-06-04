@@ -26,7 +26,7 @@ public class Otazka {
         this.odpoved = odpoved;
     }
 
-    public boolean jeOdpovedSpravce(String odpoved){
+    public boolean jeOdpovedSpravne(String odpoved){
         return this.odpoved.equalsIgnoreCase(odpoved);
     }
 }

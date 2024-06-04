@@ -11,10 +11,12 @@ import java.awt.event.ComponentEvent;
 public class HraciPole extends JFrame {
 
     private final JPanel mainPanel;
+    private final static String[] letters = {"A", "B", "C", "Č", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "Ř", "S", "T", "U", "V", "W", "Y", "Z", "Ž"};
+
     public JButton player1;
     public JButton player2;
 
-    public HraciPole(AzKviz azKviz) {
+    public HraciPole(AzKviz azKviz, boolean finale) {
 
         setTitle("Az Kvíz");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -55,6 +57,8 @@ public class HraciPole extends JFrame {
 
         int index = 1;
 
+
+
         for(int i = 0; i < buttonStates.length; i++){
             int[] row = buttonStates[i];
             JPanel rowPanel = new JPanel();
@@ -64,7 +68,10 @@ public class HraciPole extends JFrame {
             for(int j = 0; j < row.length; j++){
                 int col = row[j];
                 if(col == 0) continue;
-                HexagonButton button = new HexagonButton(azKviz, this, String.valueOf(index), String.valueOf(index), i, j);
+
+                String text = finale ? letters[index-1] : String.valueOf(index);
+
+                HexagonButton button = new HexagonButton(azKviz, this, text, text, i, j);
                 button.setBackground(Color.decode("#9cd2f1"));
                 button.setFont(button.getFont().deriveFont(Font.BOLD));
                 rowPanel.add(button);

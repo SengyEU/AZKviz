@@ -1,5 +1,6 @@
 package azkviz;
 
+import azkviz.gui.HlavniMenu;
 import azkviz.gui.HraciPole;
 import azkviz.otazky.Otazky;
 
@@ -10,6 +11,8 @@ import java.util.*;
 public class AzKviz {
 
 
+    private final boolean finale;
+
     private boolean player1 = true;
     private int[][] buttonStates = new int[7][7];
     private GameField[][] gameFields;
@@ -17,10 +20,14 @@ public class AzKviz {
 
     HraciPole hraciPole;
 
+    public AzKviz(boolean finale) {
+        this.finale = finale;
+    }
+
     public void start() throws IOException {
         initializeButtonStates();
         initializeGameFields();
-        hraciPole = new HraciPole(this);
+        hraciPole = new HraciPole(this, finale);
         otazky = new Otazky();
     }
 
@@ -49,7 +56,7 @@ public class AzKviz {
 
     private void restart(){
         hraciPole.dispose();
-        hraciPole = new HraciPole(this);
+        HlavniMenu hlavniMenu = new HlavniMenu();
         buttonStates = new int[7][7];
         initializeButtonStates();
         player1 = true;
