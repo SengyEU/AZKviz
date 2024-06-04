@@ -11,7 +11,7 @@ import java.util.*;
 public class AzKviz {
 
 
-    private final boolean finale;
+    public final boolean finale;
 
     private boolean player1 = true;
     private int[][] buttonStates = new int[7][7];

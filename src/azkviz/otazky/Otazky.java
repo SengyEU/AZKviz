@@ -48,8 +48,9 @@ public class Otazky {
         }
     }
 
-    public Otazka vygenerujOtazku(boolean vedomostniOtazka){
-        return vygenerujOtazkuZListu(vedomostniOtazka ? semifinaloveOtazky : nahradniOtazky);
+    public Otazka vygenerujOtazku(boolean finale, boolean nahradni, String letter){
+        if(nahradni) vygenerujOtazkuZListu(nahradniOtazky);
+        return vygenerujOtazkuZListu(finale ? finaloveOtazky.get(letter.toLowerCase()) : semifinaloveOtazky);
     }
 
     private Otazka vygenerujOtazkuZListu(List<Otazka> otazky) {

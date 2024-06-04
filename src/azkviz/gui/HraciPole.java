@@ -11,10 +11,12 @@ import java.awt.event.ComponentEvent;
 public class HraciPole extends JFrame {
 
     private final JPanel mainPanel;
-    private final static String[] letters = {"A", "B", "C", "Č", "D", "E", "F", "G", "H", "Ch", "I", "J", "K", "L", "M", "N", "O", "P", "R", "Ř", "S", "T", "U", "V", "W", "Y", "Z", "Ž"};
+    private final static String[] letters = {"A", "B", "C", "Č", "D", "E", "F", "G", "H", "Ch", "I", "J", "K", "L", "M", "N", "O", "P", "R", "Ř", "S", "Š", "T", "U", "V", "W", "Z", "Ž"};
 
     public JButton player1;
+    public HexaButton player1icon;
     public JButton player2;
+    public HexaButton player2icon;
 
     public HraciPole(AzKviz azKviz, boolean finale) {
 
@@ -37,13 +39,19 @@ public class HraciPole extends JFrame {
         player1 = new JButton("Hráč 1");
         player1.setAlignmentX(Component.LEFT_ALIGNMENT);
         player1.setBackground(Color.decode("#70e3e5"));
+        player1icon = new HexaButton(this, "", "#70e3e5");
+        player1icon.setBackground(Color.decode("#9cd2f1"));
 
         player2 = new JButton("Hráč 2");
         player2.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        player2.setBackground(Color.GRAY);
+        player2.setBackground(Color.decode("#f3a004"));
+        player2icon = new HexaButton(this, "", "#808080");
+        player2icon.setBackground(Color.decode("#9cd2f1"));
 
         playersPanel.add(player1);
+        playersPanel.add(player1icon);
         playersPanel.add(Box.createHorizontalGlue());
+        playersPanel.add(player2icon);
         playersPanel.add(player2);
 
         mainPanel.add(playersPanel);
@@ -57,21 +65,19 @@ public class HraciPole extends JFrame {
 
         int index = 1;
 
-
-
-        for(int i = 0; i < buttonStates.length; i++){
+        for (int i = 0; i < buttonStates.length; i++) {
             int[] row = buttonStates[i];
             JPanel rowPanel = new JPanel();
             rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
             rowPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            for(int j = 0; j < row.length; j++){
+            for (int j = 0; j < row.length; j++) {
                 int col = row[j];
-                if(col == 0) continue;
+                if (col == 0) continue;
 
-                String text = finale ? letters[index-1] : String.valueOf(index);
+                String text = finale ? letters[index - 1] : String.valueOf(index);
 
-                HexagonButton button = new HexagonButton(azKviz, this, text, text, i, j);
+                GameButton button = new GameButton(azKviz, this, text, text, i, j);
                 button.setBackground(Color.decode("#9cd2f1"));
                 button.setFont(button.getFont().deriveFont(Font.BOLD));
                 rowPanel.add(button);
@@ -110,12 +116,23 @@ public class HraciPole extends JFrame {
             for (Component comp : rowPanel.getComponents()) {
                 if (comp instanceof JPanel childPanel) {
                     for (Component childComp : childPanel.getComponents()) {
-                        if (childComp instanceof HexagonButton button) {
+                        if (childComp instanceof GameButton button) {
+                            setButtonSizeAndFont(button, buttonSize, buttonSize, mainPanelSize / 40f);
+                        }
+                        if (childComp instanceof HexaButton button) {
                             setButtonSizeAndFont(button, buttonSize, buttonSize, mainPanelSize / 40f);
                         }
                     }
                 } else if (comp instanceof JButton button) {
-                    setButtonSizeAndFont(button, buttonWidth * 2, buttonSize * 2, mainPanelSize / 60f);
+                    if (button == player1icon || button == player2icon) {
+                        // Set smaller size for player icons
+                        setButtonSizeAndFont(button, (int) (buttonSize * 1.5), (int) (buttonSize * 1.5), mainPanelSize / 60f);
+                    } else if (button == player1 || button == player2) {
+                        // Set smaller size for player buttons
+                        setButtonSizeAndFont(button, (int) (buttonWidth * 1.5), (int) (buttonSize * 1.5), mainPanelSize / 60f);
+                    } else {
+                        setButtonSizeAndFont(button, buttonWidth * 2, buttonSize * 2, mainPanelSize / 60f);
+                    }
                 }
             }
 
@@ -127,7 +144,7 @@ public class HraciPole extends JFrame {
     private void setButtonSizeAndFont(JButton button, int width, int height, float fontSize) {
         button.setPreferredSize(new Dimension(width, height));
         button.setMaximumSize(new Dimension(width, height));
+        button.setMinimumSize(new Dimension(width, height));
         button.setFont(button.getFont().deriveFont(fontSize));
     }
-
 }

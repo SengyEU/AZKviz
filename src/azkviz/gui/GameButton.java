@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
-public class HexagonButton extends JButton {
+public class GameButton extends JButton {
 
     private static final int NO_ANSWER = 0;
     private static final int PLAYER_1_CORRECT = 1;
@@ -19,7 +19,7 @@ public class HexagonButton extends JButton {
     private final int col;
     private HexagonPath hexagonPath;
 
-    public HexagonButton(AzKviz azKviz, HraciPole hraciPole, String text, String number, int row, int col) {
+    public GameButton(AzKviz azKviz, HraciPole hraciPole, String text, String number, int row, int col) {
         super(text);
         applyDefaults();
 
@@ -32,9 +32,11 @@ public class HexagonButton extends JButton {
 
             if (state != 1 && state != 4) return;
 
-            int result = otazka(state == 4);
+            int result = otazka(state == 4, hraciPole);
             handleResult(result, hraciPole);
             setText(number);
+            hraciPole.player1icon.setText("");
+            hraciPole.player2icon.setText("");
         });
     }
 
@@ -59,19 +61,19 @@ public class HexagonButton extends JButton {
 
     private void updatePlayerColors(HraciPole hraciPole) {
         if (azKviz.isPlayer1Playing()) {
-            hraciPole.player1.setBackground(Color.decode("#70e3e5"));
-            hraciPole.player2.setBackground(Color.gray);
+            hraciPole.player1icon.setColor("#70e3e5");
+            hraciPole.player2icon.setColor("#808080");
         } else {
-            hraciPole.player1.setBackground(Color.gray);
-            hraciPole.player2.setBackground(Color.decode("#f3a004"));
+            hraciPole.player2icon.setColor("#f3a004");
+            hraciPole.player1icon.setColor("#808080");
         }
     }
 
-    private int otazka(boolean anoNe) {
-        Otazka otazka = azKviz.otazky.vygenerujOtazku(!anoNe);
+    private int otazka(boolean anoNe, HraciPole hraciPole) {
+        Otazka otazka = azKviz.otazky.vygenerujOtazku(azKviz.finale, !anoNe, getText());
 
         if (!anoNe) {
-            showFirstLetters(otazka);
+            showFirstLetters(otazka, hraciPole);
         }
 
         if (anoNe) {
@@ -81,13 +83,20 @@ public class HexagonButton extends JButton {
         }
     }
 
-    private void showFirstLetters(Otazka otazka) {
+    private void showFirstLetters(Otazka otazka, HraciPole hraciPole) {
         String[] words = otazka.getOdpoved().split(" ");
         StringBuilder firstLetters = new StringBuilder();
         for (String word : words) {
             firstLetters.append(word.charAt(0));
         }
-        setText(firstLetters.toString());
+
+        if (azKviz.isPlayer1Playing()) {
+            hraciPole.player1icon.setText(firstLetters.toString());
+        } else {
+            hraciPole.player2icon.setText(firstLetters.toString());
+        }
+
+        if(!azKviz.finale) setText(firstLetters.toString());
     }
 
     private int handleYesNoQuestion(Otazka otazka) {
