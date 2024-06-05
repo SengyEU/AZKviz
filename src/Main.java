@@ -8,7 +8,6 @@ public class Main {
 
     //TODO: Více správných odpovědí na jednu otázku
     //TODO: Odpověď bez háčků a čárek
-    //TODO: Oprava náhradních otázek
     //TODO: Design popupů
     //TODO: Jména hráčů v menu před vstupem do hry
     //TODO: Zvětšení (vysunutí) vybraného políčka z pyramidy

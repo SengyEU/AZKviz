@@ -70,7 +70,7 @@ public class GameButton extends JButton {
     }
 
     private int otazka(boolean anoNe, HraciPole hraciPole) {
-        Otazka otazka = azKviz.otazky.vygenerujOtazku(azKviz.finale, !anoNe, getText());
+        Otazka otazka = azKviz.otazky.vygenerujOtazku(azKviz.finale, anoNe, getText());
 
         if (!anoNe) {
             showFirstLetters(otazka, hraciPole);
@@ -91,9 +91,9 @@ public class GameButton extends JButton {
         }
 
         if (azKviz.isPlayer1Playing()) {
-            hraciPole.player1icon.setText(firstLetters.toString());
+            hraciPole.player1icon.setText(firstLetters.toString().toUpperCase());
         } else {
-            hraciPole.player2icon.setText(firstLetters.toString());
+            hraciPole.player2icon.setText(firstLetters.toString().toUpperCase());
         }
 
         if(!azKviz.finale) setText(firstLetters.toString());

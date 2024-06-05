@@ -49,7 +49,7 @@ public class Otazky {
     }
 
     public Otazka vygenerujOtazku(boolean finale, boolean nahradni, String letter){
-        if(nahradni) vygenerujOtazkuZListu(nahradniOtazky);
+        if(nahradni) return vygenerujOtazkuZListu(nahradniOtazky);
         return vygenerujOtazkuZListu(finale ? finaloveOtazky.get(letter.toLowerCase()) : semifinaloveOtazky);
     }
 
