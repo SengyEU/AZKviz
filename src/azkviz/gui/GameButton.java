@@ -1,6 +1,7 @@
 package azkviz.gui;
 
 import azkviz.AzKviz;
+import azkviz.otazky.NahradniOtazka;
 import azkviz.otazky.Otazka;
 
 import javax.swing.*;
@@ -84,7 +85,7 @@ public class GameButton extends JButton {
     }
 
     private void showFirstLetters(Otazka otazka, HraciPole hraciPole) {
-        String[] words = otazka.getOdpoved().split(" ");
+        String[] words = otazka.getOdpovedi()[0].split(" ");
         StringBuilder firstLetters = new StringBuilder();
         for (String word : words) {
             firstLetters.append(word.charAt(0));
@@ -101,8 +102,7 @@ public class GameButton extends JButton {
 
     private int handleYesNoQuestion(Otazka otazka) {
         int answer = JOptionPane.showConfirmDialog(null, otazka.getOtazka());
-        int correctAnswer = otazka.getOdpoved().equalsIgnoreCase("ano") ? 0 : 1;
-        if (answer == correctAnswer) {
+        if (((NahradniOtazka) otazka).jeOdpovedSpravne(answer)) {
             showCorrectAnswerDialog(otazka);
             return azKviz.isPlayer1Playing() ? PLAYER_1_CORRECT : PLAYER_2_CORRECT;
         } else {
@@ -138,8 +138,12 @@ public class GameButton extends JButton {
     }
 
     private void showCorrectAnswerDialog(Otazka otazka) {
-        JOptionPane.showMessageDialog(null, "Správná odpověď byla: " + otazka.getOdpoved(), otazka.getOdpoved(), JOptionPane.INFORMATION_MESSAGE);
+
+        String spravnaOdpoved = otazka instanceof NahradniOtazka ? ((NahradniOtazka) otazka).getOdpoved() : otazka.getOdpovedi()[0];
+
+        JOptionPane.showMessageDialog(null, "Správná odpověď byla: " + spravnaOdpoved, spravnaOdpoved, JOptionPane.INFORMATION_MESSAGE);
     }
+
 
     private Color getStateColor() {
         Color fillColor;

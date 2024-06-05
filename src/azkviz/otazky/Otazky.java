@@ -3,7 +3,9 @@ package azkviz.otazky;
 import azkviz.Files;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Otazky {
 
@@ -22,8 +24,9 @@ public class Otazky {
     public void nactiSemifinaloveOtazky() throws IOException {
         for(String line : Files.getLinesFromFile("azkviz/otazky/semifinale.csv")){
             String[] otazkaOdpoved = line.split(";");
+            String[] odpovedi = Arrays.copyOfRange(otazkaOdpoved, 1, otazkaOdpoved.length);
 
-            semifinaloveOtazky.add(new Otazka(otazkaOdpoved[0], otazkaOdpoved[1]));
+            semifinaloveOtazky.add(new Otazka(otazkaOdpoved[0], odpovedi));
         }
     }
 
@@ -33,18 +36,19 @@ public class Otazky {
 
             String pismeno = pismenoOtazkaOdpoved[0];
             String otazka = pismenoOtazkaOdpoved[1];
-            String odpoved = pismenoOtazkaOdpoved[2];
+            String[] odpovedi = Arrays.copyOfRange(pismenoOtazkaOdpoved, 2, pismenoOtazkaOdpoved.length);
 
             if(!finaloveOtazky.containsKey(pismeno)) finaloveOtazky.put(pismeno, new ArrayList<>());
-            finaloveOtazky.get(pismeno).add(new Otazka(otazka, odpoved));
+            finaloveOtazky.get(pismeno).add(new Otazka(otazka, odpovedi));
         }
     }
 
     public void nactiNahradniOtazky() throws IOException {
         for(String line : Files.getLinesFromFile("azkviz/otazky/nahradni.csv")){
             String[] otazkaOdpoved = line.split(";");
+            int odpoved = otazkaOdpoved[1].equalsIgnoreCase("ano") ? 0 : 1;
 
-            nahradniOtazky.add(new Otazka(otazkaOdpoved[0], otazkaOdpoved[1]));
+            nahradniOtazky.add(new NahradniOtazka(otazkaOdpoved[0], odpoved));
         }
     }
 
