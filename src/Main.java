@@ -1,17 +1,14 @@
-import azkviz.gui.HlavniMenu;
+import azkviz.gui.MainMenu;
 
 public class Main {
     public static void main(String[] args) {
-        HlavniMenu hlavniMenu = new HlavniMenu();
+        new MainMenu();
     }
 
-
-    //TODO: Více správných odpovědí na jednu otázku
-    //TODO: Design popupů
-    //TODO: Jména hráčů v menu před vstupem do hry
-    //TODO: Zvětšení (vysunutí) vybraného políčka z pyramidy
+    //TODO: Zobrazení výhry
     //TODO: Statistiky - celkové hry, kolikrát vyhrál hráč 1, kolikrát hráč 2
     //TODO: Refactor + reformat
     //TODO: Developerska dokumentace
     //TODO: Readme
+
 }
