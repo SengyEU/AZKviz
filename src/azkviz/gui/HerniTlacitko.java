@@ -8,6 +8,10 @@ import azkviz.otazky.Otazka;
 
 import java.awt.*;
 
+/**
+ * Třída HerniTlacitko představuje tlačítko v herním poli hry AzKviz.
+ * Rozšiřuje třídu HexagonButton a přidává logiku pro herní interakce a změnu stavu tlačítka.
+ */
 public class HerniTlacitko extends HexagonButton {
 
     private static final int NO_ANSWER = 0;
@@ -20,6 +24,16 @@ public class HerniTlacitko extends HexagonButton {
     private final int col;
     private final String identifier;
 
+    /**
+     * Konstruktor HerniTlacitko.
+     *
+     * @param azKviz Instance třídy AzKviz pro manipulaci s herní logikou.
+     * @param herniPlocha Instance třídy HerniPlocha, která reprezentuje herní pole.
+     * @param text Text, který bude zobrazen na tlačítku.
+     * @param identifier Identifikátor tlačítka.
+     * @param row Řádek tlačítka v herním poli.
+     * @param col Sloupec tlačítka v herním poli.
+     */
     public HerniTlacitko(AzKviz azKviz, HerniPlocha herniPlocha, String text, String identifier, int row, int col) {
         super(text, Color.WHITE);
         applyDefaults();
@@ -42,6 +56,12 @@ public class HerniTlacitko extends HexagonButton {
         });
     }
 
+    /**
+     * Zpracovává výsledek odpovědi na otázku a aktualizuje stav tlačítka.
+     *
+     * @param result Výsledek odpovědi.
+     * @param herniPlocha Instance třídy HerniPlocha pro manipulaci s herními ikonami.
+     */
     private void handleResult(int result, HerniPlocha herniPlocha) {
         if (result == PLAYER_1_CORRECT) {
             setState(2);
@@ -61,6 +81,11 @@ public class HerniTlacitko extends HexagonButton {
         updatePlayerColors(herniPlocha);
     }
 
+    /**
+     * Aktualizuje barvy hráčů na herní ploše podle aktuálního stavu hry.
+     *
+     * @param herniPlocha Instance třídy HerniPlocha pro manipulaci s herními ikonami.
+     */
     private void updatePlayerColors(HerniPlocha herniPlocha) {
         if (azKviz.isPlayer1Playing()) {
             herniPlocha.player1icon.setColor(AzKviz.player1Color);
@@ -71,6 +96,13 @@ public class HerniTlacitko extends HexagonButton {
         }
     }
 
+    /**
+     * Generuje a zpracovává otázku na základě aktuálního stavu hry.
+     *
+     * @param anoNe True pokud se jedná o otázku typu Ano/Ne, jinak False.
+     * @param herniPlocha Instance třídy HerniPlocha pro manipulaci s herními ikonami.
+     * @return Výsledek odpovědi.
+     */
     private int otazka(boolean anoNe, HerniPlocha herniPlocha) {
         Otazka otazka = azKviz.otazky.vygenerujOtazku(azKviz.finale, anoNe, getText());
 
@@ -85,6 +117,12 @@ public class HerniTlacitko extends HexagonButton {
         }
     }
 
+    /**
+     * Vrací první písmena slov v odpovědi na otázku.
+     *
+     * @param otazka Instance třídy Otazka obsahující otázku a odpovědi.
+     * @return První písmena slov v odpovědi.
+     */
     private String getFirstLetters(Otazka otazka) {
         String[] words = otazka.getOdpovedi()[0].split(" ");
         StringBuilder firstLetters = new StringBuilder();
@@ -95,6 +133,12 @@ public class HerniTlacitko extends HexagonButton {
         return firstLetters.toString();
     }
 
+    /**
+     * Zobrazuje první písmena odpovědí na otázku.
+     *
+     * @param otazka Instance třídy Otazka obsahující otázku a odpovědi.
+     * @param herniPlocha Instance třídy HerniPlocha pro manipulaci s herními ikonami.
+     */
     private void showFirstLetters(Otazka otazka, HerniPlocha herniPlocha) {
 
         String firstLetters = getFirstLetters(otazka);
@@ -108,6 +152,12 @@ public class HerniTlacitko extends HexagonButton {
         if(!azKviz.finale) setText(firstLetters);
     }
 
+    /**
+     * Zpracovává otázku typu Ano/Ne.
+     *
+     * @param otazka Instance třídy Otazka obsahující otázku a odpovědi.
+     * @return Výsledek odpovědi.
+     */
     private int handleYesNoQuestion(Otazka otazka) {
 
         String decision = showInputDialog(otazka.getOtazka(), azKviz.isPlayer1Playing() ? AzKviz.player1Color : AzKviz.player2Color, identifier, true);
@@ -122,6 +172,12 @@ public class HerniTlacitko extends HexagonButton {
         }
     }
 
+    /**
+     * Zpracovává textovou otázku.
+     *
+     * @param otazka Instance třídy Otazka obsahující otázku a odpovědi.
+     * @return Výsledek odpovědi.
+     */
     private int handleTextQuestion(Otazka otazka) {
         String answer = showInputDialog(otazka.getOtazka(), azKviz.isPlayer1Playing() ? AzKviz.player1Color : AzKviz.player2Color, getFirstLetters(otazka), false);
         if (otazka.jeOdpovedSpravne(answer)) {
@@ -132,6 +188,15 @@ public class HerniTlacitko extends HexagonButton {
         }
     }
 
+    /**
+     * Zobrazuje dialog pro zadání odpovědi na otázku.
+     *
+     * @param otazka Text otázky.
+     * @param color Barva textu.
+     * @param buttonText Text tlačítka.
+     * @param anoNe True pokud se jedná o otázku typu Ano/Ne, jinak False.
+     * @return Text uživatelem zadané odpovědi.
+     */
     private String showInputDialog(String otazka, Color color, String buttonText, boolean anoNe) {
         AnswerInputDialog dialog = new AnswerInputDialog(otazka, color, buttonText, anoNe);
         dialog.setVisible(true);
@@ -142,6 +207,12 @@ public class HerniTlacitko extends HexagonButton {
         }
     }
 
+    /**
+     * Zpracovává situaci, kdy první hráč odpověděl špatně na textovou otázku.
+     *
+     * @param otazka Instance třídy Otazka obsahující otázku a odpovědi.
+     * @return Výsledek odpovědi.
+     */
     private int handleWrongTextAnswer(Otazka otazka) {
         String decision = showInputDialog("Chce odpovídat druhý hráč?", AzKviz.lightGrayColor, getFirstLetters(otazka), true);
 
@@ -162,14 +233,22 @@ public class HerniTlacitko extends HexagonButton {
         }
     }
 
+    /**
+     * Zobrazuje dialog s informací o správné odpovědi.
+     *
+     * @param otazka Instance třídy Otazka obsahující otázku a odpovědi.
+     */
     private void showCorrectAnswerDialog(Otazka otazka) {
-
         String spravnaOdpoved = otazka instanceof NahradniOtazka ? ((NahradniOtazka) otazka).getOdpoved() : otazka.getOdpovedi()[0];
 
         new InformationDialog("Správná odpověď", "Správná odpověď byla: " + spravnaOdpoved, AzKviz.lightGrayColor);
     }
 
-
+    /**
+     * Vrací barvu podle aktuálního stavu tlačítka.
+     *
+     * @return Barva odpovídající aktuálnímu stavu tlačítka.
+     */
     private Color getStateColor() {
         Color fillColor;
         switch (azKviz.getButtonState(row, col)) {
@@ -182,15 +261,22 @@ public class HerniTlacitko extends HexagonButton {
         return fillColor;
     }
 
+    /**
+     * Nastavuje stav tlačítka a aktualizuje herní stav.
+     *
+     * @param state Nový stav tlačítka.
+     */
     public void setState(int state) {
-
         azKviz.setButtonState(state, row, col);
-
-
         repaint();
         azKviz.play();
     }
 
+    /**
+     * Překresluje hranice tlačítka s odpovídajícími vizuálními efekty.
+     *
+     * @param g Grafický kontext.
+     */
     @Override
     protected void paintBorder(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
